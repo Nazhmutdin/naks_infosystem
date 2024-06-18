@@ -1,3 +1,3 @@
 [submodule "backend"]
 	path = backend
-	url = git@github.com:Nazhmutdin/naks_infosystem_backend.git
+	url = https://github.com/Nazhmutdin/naks_infosystem_backend.git

@@ -1,11 +1,11 @@
-
-upstream backend{
+upstream backend {
     server backend:8000;
 }
 
 server {
     listen 80;
-    server_name _;
+    
+    server_name ${IP_NGINX};
 
     location / {
         proxy_pass http://backend;

@@ -14,7 +14,10 @@ services:
     ports:
       - 80:80
 
-    command: bash -c "envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    command: > 
+      bash -c "envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/sites-available/${IP_NGINX}.conf
+      && ln -s /etc/nginx/sites-available/${IP_NGINX}.conf /etc/nginx/sites-enabled/
+      && nginx -g 'daemon off;'"
 
   backend:
     build:

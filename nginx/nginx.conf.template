@@ -4,10 +4,15 @@ upstream backend {
 
 server {
     listen 80;
+    listen [::]:80;
     
     server_name ${IP_NGINX};
 
-    location / {
+    location /auth/ {
+        proxy_pass http://backend;
+    }
+
+    location /api/ {
         proxy_pass http://backend;
     }
 }

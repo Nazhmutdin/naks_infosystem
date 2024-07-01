@@ -1,18 +1,31 @@
-upstream backend {
+upstream backend_host {
     server backend:8000;
+}
+
+upstream auth_host {
+    server auth:8000;
 }
 
 server {
     listen 80;
     listen [::]:80;
-    
+
     server_name ${IP_NGINX};
 
-    location /auth/ {
-        proxy_pass http://backend;
+    location = /auth {
+        internal;
+        proxy_pass http://auth_host/api/auth/v1/validate-access;
+        
+        proxy_pass_request_body off;
     }
 
-    location /api/ {
-        proxy_pass http://backend;
+    location ~ /api/auth/v1/(authorizate|authenticate|update-tokens) {
+        proxy_pass http://auth_host;
+    }
+
+    location /api/v1/ {
+        auth_request /auth;
+
+        proxy_pass http://backend_host;
     }
 }

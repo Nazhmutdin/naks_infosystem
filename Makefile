@@ -3,6 +3,9 @@ include .env
 
 build:
 	docker compose build
+
+up-build:
+	docker compose up --build
 	
 start:
 	docker compose start
@@ -10,11 +13,12 @@ start:
 stop:
 	docker compose stop
 
-move_env:
+move-env:
 	scp -i ~/.ssh/cloudru .env nazhmutdin@${IP_NGINX}:/home/nazhmutdin/naks_infosystem
 
-reload_nginx:
+reload-nginx-container:
 	docker exec -it nginx nginx -s reload
 
-dump_data:
+dump-data:
 	docker exec -it db pg_dump -d rhi -U ${USER} > $(file_name) -a
+	docker exec -it db pg_dump -d rhi_auth -U ${USER} > $(file_name)_auth -a

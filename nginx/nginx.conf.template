@@ -17,6 +17,7 @@ server {
         proxy_pass http://auth_host/api/auth/v1/validate-access;
         
         proxy_pass_request_body on;
+        proxy_pass_header Host $host;
     }
 
     location ~ /api/auth/v1/(authorizate|authenticate|update-tokens) {

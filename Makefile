@@ -20,5 +20,5 @@ reload-nginx-container:
 	docker exec -it nginx nginx -s reload
 
 dump-data:
-	docker exec -it db pg_dump -d rhi -U ${USER} > $(file_name) -a
-	docker exec -it db pg_dump -d rhi_auth -U ${USER} > $(file_name)_auth -a
+	docker exec -it db pg_dump -d rhi -U ${USER} > $(file_name).sql -a
+	docker exec -it auth_db pg_dump -d rhi_auth -U ${USER} > $(file_name)_auth.sql -a

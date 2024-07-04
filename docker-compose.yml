@@ -22,6 +22,9 @@ services:
     ports:
       - 80:80
 
+    networks:
+      - infosystem_net
+
     depends_on:
       - backend
       - auth
@@ -47,6 +50,9 @@ services:
     ports: 
       - 8000:8000
 
+    networks:
+      - infosystem_net
+
     depends_on:
       - db
     
@@ -68,6 +74,9 @@ services:
 
     volumes:
       - backend_data:/var/lib/postgresql
+
+    networks:
+      - infosystem_net
 
     healthcheck:
       test: [ "CMD", "pg_isready", "-d", "rhi", "-U", "${USER}" ]
@@ -95,6 +104,9 @@ services:
     ports: 
       - 8001:8000
 
+    networks:
+      - infosystem_net
+
     depends_on:
       - auth_db
 
@@ -114,6 +126,9 @@ services:
     ports:
       - 5434:5432
 
+    networks:
+      - infosystem_net
+
     volumes:
       - auth_data:/var/lib/postgresql
 
@@ -126,3 +141,7 @@ services:
 volumes:
   backend_data:
   auth_data:
+
+
+networks:
+  infosystem_net:

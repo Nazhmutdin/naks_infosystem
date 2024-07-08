@@ -8,7 +8,7 @@ upstream auth_host {
 
 server {
 
-    server_name ${API_DOMAIN};
+    server_name ${API_DOMAIN} ${IP_NGINX};
     listen 80;
 
     location = /auth {

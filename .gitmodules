@@ -1,7 +1,9 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/Nazhmutdin/naks_infosystem_backend.git
+	ignore = dirty
 
 [submodule "auth"]
 	path = auth
 	url = https://github.com/Nazhmutdin/naks_infosystem_auth.git
+	ignore = dirty

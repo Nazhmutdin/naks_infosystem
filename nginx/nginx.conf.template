@@ -19,7 +19,7 @@ server {
         proxy_pass_header Host $host;
     }
 
-    location ~ /auth/v1/(authorizate | authenticate | update-tokens)$ {
+    location ~ /auth/v1/(authorizate | authenticate | update-tokens) {
         proxy_pass http://auth_host;
     }
 

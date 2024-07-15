@@ -28,6 +28,24 @@ services:
     depends_on:
       - backend
       - auth
+ 
+  certbot:
+    ports:
+      - 6000:80
+      
+    volumes:
+      - ./nginx:/etc/nginx
+
+    build:
+      context: ./certbot
+      dockerfile: Dockerfile
+      args:
+        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
+        DOMAIN: ${DOMAIN}
+        API_DOMAIN: ${API_DOMAIN}
+
+    networks:
+      - infosystem_net
 
   backend:
     build:

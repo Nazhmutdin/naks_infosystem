@@ -3,24 +3,21 @@ services:
   nginx:
     container_name: nginx
 
-    environment:
-      - IP_NGINX=${IP_NGINX}
-
     build:
       context: ./nginx
       dockerfile: Dockerfile
 
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/nginx.conf.template:/etc/nginx/default.conf.template
-
-    command: > 
-      bash -c "envsubst < /etc/nginx/default.conf.template > /etc/nginx/sites-available/${IP_NGINX}.conf
-      && ln -sf /etc/nginx/sites-available/${IP_NGINX}.conf /etc/nginx/sites-enabled/
-      && nginx -g 'daemon off;'"
+      - ./nginx/api_nginx.conf.template:/etc/nginx/api_nginx.conf.template:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
+      - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
+      - ./nginx/ssl/key.pem:/etc/nginx/key.pem
+      - webroot-path:/var/www/certbot/
 
     ports:
       - 80:80
+      - 443:443
 
     networks:
       - infosystem_net
@@ -28,13 +25,22 @@ services:
     depends_on:
       - backend
       - auth
+
+    command: > 
+      bash -c "envsubst < /etc/nginx/api_nginx.conf.template > /etc/nginx/sites-available/${API_DOMAIN}.conf
+      && ln -sf /etc/nginx/sites-available/${API_DOMAIN}.conf /etc/nginx/sites-enabled/
+      && nginx -t
+      && nginx -g 'daemon off;'"
  
   certbot:
-    ports:
-      - 6000:80
+    container_name: certbot
       
     volumes:
-      - ./nginx:/etc/nginx
+      - /var/certbot/letsencrypt.log:/var/log/letsencrypt/letsencrypt.log
+      - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
+      - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
+      - ./nginx/ssl/key.pem:/etc/nginx/key.pem
+      - webroot-path:/var/www/certbot/
 
     build:
       context: ./certbot
@@ -46,6 +52,11 @@ services:
 
     networks:
       - infosystem_net
+
+    depends_on:
+      - nginx
+
+    command: sh generate_ssl_certificates.sh
 
   backend:
     build:
@@ -159,6 +170,7 @@ services:
 volumes:
   backend_data:
   auth_data:
+  webroot-path:
 
 
 networks:

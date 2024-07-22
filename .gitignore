@@ -1,2 +1,6 @@
 *.env
 dumps
+
+key.pem
+cert.pem
+trusted_cert.pem

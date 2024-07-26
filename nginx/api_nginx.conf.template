@@ -35,6 +35,7 @@ server {
 
     location = /auth {
         internal;
+        proxy_method POST;
         proxy_pass http://auth_host/auth/v1/validate-access;
 
         proxy_pass_request_body on;

@@ -1,6 +1,8 @@
 *.env
 dumps
 
+frontend/
+
 key.pem
 cert.pem
 trusted_cert.pem

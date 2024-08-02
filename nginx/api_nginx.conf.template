@@ -39,15 +39,22 @@ server {
         proxy_pass http://auth_host/auth/v1/validate-access;
 
         proxy_pass_request_body on;
+        proxy_pass_request_headers on;
     }
 
     location ~ /auth/v1/(authorizate|authenticate|update-tokens)$ {
         proxy_pass http://auth_host;
+
+        proxy_pass_request_body on;
+        proxy_pass_request_headers on;
     }
 
     location /v1 {
         auth_request /auth;
 
         proxy_pass http://backend_host;
+
+        proxy_pass_request_body on;
+        proxy_pass_request_headers on;
     }
 }

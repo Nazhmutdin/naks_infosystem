@@ -1,6 +1,15 @@
 #!make
 include .env
 
+pull-recurse:
+	git pull --recurse-submodules
+
+up:
+	docker compose up $(container-name)
+
+up-d:
+	docker compose up -d $(container-name)
+
 build:
 	docker compose build
 

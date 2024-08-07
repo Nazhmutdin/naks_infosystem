@@ -42,7 +42,7 @@ server {
         proxy_pass_request_headers on;
     }
 
-    location ~ /auth/v1/(authorizate|authenticate|update-tokens)$ {
+    location /auth/v1 {
         proxy_pass http://auth_host;
 
         proxy_pass_request_body on;

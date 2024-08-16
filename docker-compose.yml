@@ -13,7 +13,7 @@ services:
       - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
       - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
       - ./nginx/ssl/key.pem:/etc/nginx/key.pem
-      - webroot-path:/var/www/certbot/
+      - ./certbot/:/var/www/certbot/
 
     ports:
       - 80:80
@@ -31,32 +31,6 @@ services:
       && ln -sf /etc/nginx/sites-available/${API_DOMAIN}.conf /etc/nginx/sites-enabled/
       && nginx -t
       && nginx -g 'daemon off;'"
- 
-  certbot:
-    container_name: certbot
-      
-    volumes:
-      - /var/certbot/letsencrypt.log:/var/log/letsencrypt/letsencrypt.log
-      - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
-      - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
-      - ./nginx/ssl/key.pem:/etc/nginx/key.pem
-      - webroot-path:/var/www/certbot/
-
-    build:
-      context: ./certbot
-      dockerfile: Dockerfile
-      args:
-        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
-        DOMAIN: ${DOMAIN}
-        API_DOMAIN: ${API_DOMAIN}
-
-    networks:
-      - infosystem_net
-
-    depends_on:
-      - nginx
-
-    command: sh generate_ssl_certificates.sh
 
   backend:
     build:
@@ -70,10 +44,10 @@ services:
     environment:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
-      - DATABASE_NAME=rhi
+      - DATABASE_NAME=${DATABASE_NAME}
       - USER=${USER}
-      - PORT=5432
-      - MODE=PROD
+      - PORT=${DB_PORT}
+      - MODE=${MODE}
       - HOST=db
 
     ports: 
@@ -95,7 +69,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_USER=${USER}
-      - POSTGRES_DB=rhi
+      - POSTGRES_DB=${DATABASE_NAME}
       - PGDATA=/var/lib/postgresql/data/
 
     ports:
@@ -108,7 +82,7 @@ services:
       - infosystem_net
 
     healthcheck:
-      test: [ "CMD", "pg_isready", "-d", "rhi", "-U", "${USER}" ]
+      test: [ "CMD", "pg_isready", "-d", "${DATABASE_NAME}", "-U", "${USER}" ]
       timeout: 3s
       retries: 5
 
@@ -123,12 +97,12 @@ services:
     
     environment:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - AUTH_DATABASE_NAME=rhi_auth
+      - AUTH_DATABASE_NAME=${AUTH_DATABASE_NAME}
       - SECRET_KEY=${SECRET_KEY}
-      - AUTH_HOST=auth_db
+      - HOST=auth_db
       - USER=${USER}
-      - PORT=5432
-      - MODE=PROD
+      - PORT=${AUTH_PORT}
+      - MODE=${MODE}
 
     ports: 
       - 8001:8000
@@ -149,7 +123,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_USER=${USER}
-      - POSTGRES_DB=rhi_auth
+      - POSTGRES_DB=${AUTH_DATABASE_NAME}
       - PGDATA=/var/lib/postgresql/data/
 
     ports:
@@ -162,7 +136,7 @@ services:
       - auth_data:/var/lib/postgresql
 
     healthcheck:
-      test: [ "CMD", "pg_isready", "-d", "rhi_auth", "-U", "${USER}" ]
+      test: [ "CMD", "pg_isready", "-d", "${AUTH_DATABASE_NAME}", "-U", "${USER}" ]
       timeout: 3s
       retries: 5
 
@@ -170,7 +144,6 @@ services:
 volumes:
   backend_data:
   auth_data:
-  webroot-path:
 
 
 networks:

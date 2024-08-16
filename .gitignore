@@ -6,3 +6,6 @@ frontend/
 key.pem
 cert.pem
 trusted_cert.pem
+
+winvenv
+venv

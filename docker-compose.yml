@@ -27,7 +27,8 @@ services:
       - auth
 
     command: > 
-      bash -c "envsubst < /etc/nginx/api_nginx.conf.template > /etc/nginx/sites-available/${API_DOMAIN}.conf
+      bash -c "export API_DOMAIN=${API_DOMAIN} DOMAIN=${DOMAIN}
+      && envsubst < /etc/nginx/api_nginx.conf.template > /etc/nginx/sites-available/${API_DOMAIN}.conf
       && ln -sf /etc/nginx/sites-available/${API_DOMAIN}.conf /etc/nginx/sites-enabled/
       && nginx -t
       && nginx -g 'daemon off;'"
@@ -99,6 +100,8 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - AUTH_DATABASE_NAME=${AUTH_DATABASE_NAME}
       - SECRET_KEY=${SECRET_KEY}
+      - DOMAIN=${DOMAIN}
+      - API_DOMAIN=${API_DOMAIN}
       - HOST=auth_db
       - USER=${USER}
       - PORT=${AUTH_PORT}

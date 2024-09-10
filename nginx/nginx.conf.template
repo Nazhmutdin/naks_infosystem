@@ -1,0 +1,62 @@
+user nginx;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+	worker_connections 1024;
+}
+
+http {
+
+	map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
+		${ORIGIN_REGEX} ${DOLLAR}http_origin;
+		default "";
+	}
+
+	root /var/www/html;
+	index index.html index.nginx-debian.html;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    ssl_certificate /etc/nginx/cert.pem;
+    ssl_certificate_key /etc/nginx/key.pem;
+    ssl_trusted_certificate /etc/nginx/trusted_cert.pem;
+
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    add_header 'Access-Control-Allow-Origin' ${DOLLAR}allow_origin;
+	add_header 'Access-Control-Allow-Credentials' 'true';
+	add_header 'Access-Control-Allow-Headers' 'Accept, Accept-Language, Content-Language, Content-Type';
+	add_header 'Access-Control-Allow-Methods' 'OPTIONS, POST, GET, PATCH, DELETE, PUT';
+
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SharedNixCraftSSL:10m; 
+    ssl_session_tickets off;
+
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384;
+    ssl_ecdh_curve secp384r1;
+	ssl_prefer_server_ciphers on;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+	
+	server {
+		listen 80;
+		server_name ${DOMAIN} ${API_DOMAIN};
+
+		location ^~ /.well-known/acme-challenge/ {
+			allow all;
+			root /var/www/certbot;
+		}
+
+		location / {
+			return 308 https://${DOLLAR}host${DOLLAR}request_uri;
+		}
+	}
+
+	include /etc/nginx/sites-enabled/*;
+}

@@ -10,28 +10,6 @@ server {
     server_name ${API_DOMAIN};
     listen 443 ssl;
 
-    ssl_stapling on;
-    ssl_stapling_verify on;
-
-    ssl_certificate /etc/nginx/cert.pem;
-    ssl_certificate_key /etc/nginx/key.pem;
-    ssl_trusted_certificate /etc/nginx/trusted_cert.pem;
-
-    add_header X-Frame-Options SAMEORIGIN;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=63072000" always;
-
-    ssl_session_timeout 1d;
-    ssl_session_cache shared:SharedNixCraftSSL:10m; 
-    ssl_session_tickets off;
-
-    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384;
-    ssl_ecdh_curve secp384r1;
-	ssl_prefer_server_ciphers on;
-
-    ssl_protocols TLSv1.2 TLSv1.3;
-
     location = /auth {
         internal;
         proxy_method POST;
@@ -42,6 +20,23 @@ server {
     }
 
     location /auth/v1 {
+
+        if (${DOLLAR}request_method = OPTIONS) {
+            return 200;
+        }
+        
+        proxy_pass http://auth_host;
+
+        proxy_pass_request_body on;
+        proxy_pass_request_headers on;
+    }
+
+    location /v1/user {
+
+        if (${DOLLAR}request_method = OPTIONS) {
+            return 200;
+        }
+
         proxy_pass http://auth_host;
 
         proxy_pass_request_body on;
@@ -49,6 +44,11 @@ server {
     }
 
     location /v1 {
+
+        if (${DOLLAR}request_method = OPTIONS) {
+            return 200;
+        }
+
         auth_request /auth;
 
         proxy_pass http://backend_host;

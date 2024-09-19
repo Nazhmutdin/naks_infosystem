@@ -13,8 +13,7 @@ http {
 		${ORIGIN_REGEX} ${DOLLAR}http_origin;
 		default "";
 	}
-
-	root /var/www/html;
+	
 	index index.html index.nginx-debian.html;
 
     ssl_stapling on;
@@ -35,7 +34,7 @@ http {
 	add_header 'Access-Control-Allow-Methods' 'OPTIONS, POST, GET, PATCH, DELETE, PUT';
 
     ssl_session_timeout 1d;
-    ssl_session_cache shared:SharedNixCraftSSL:10m; 
+    ssl_session_cache shared:SharedNixCraftSSL:10m;
     ssl_session_tickets off;
 
     ssl_ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384;

@@ -2,10 +2,10 @@
 include .env
 
 gen-cert:
-	./scripts/generate_ssl_certificates.sh
+	sh ./scripts/generate_ssl_certificates.sh
 
 gen-localhost-cert:
-	./scripts/generate_localhost_ssl_certificates.sh
+	sh ./scripts/generate_localhost_ssl_certificates.sh
 
 pull-recurse:
 	git pull --recurse-submodules
@@ -25,6 +25,12 @@ up-build:
 up-build-d:
 	docker compose up --build -d $(container-name)
 
+up-build-nginx:
+	docker compose up --build nginx
+
+up-build-d-nginx:
+	docker compose up --build -d nginx
+
 start:
 	docker compose start $(container-name)
 
@@ -32,7 +38,7 @@ stop:
 	docker compose stop $(container-name)
 
 move-file:
-	scp -i ~/.ssh/cloudru $(path-from) nazhmutdin@${IP_NGINX}:/home/nazhmutdin/naks_infosystem/$(path-to)
+	scp -i ~/.ssh/cloudru $(path-from) ${USER}@${IP}:$(path-to)
 
 reload-nginx-container:
 	docker exec -it nginx nginx -s reload

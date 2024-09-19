@@ -9,11 +9,13 @@ services:
 
     volumes:
       - ./nginx/api_nginx.conf.template:/etc/nginx/api_nginx.conf.template:ro
+      - ./nginx/main_nginx.conf.template:/etc/nginx/main_nginx.conf.template:ro
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
       - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
       - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
       - ./nginx/ssl/key.pem:/etc/nginx/key.pem
-      - ./certbot/:/var/www/certbot/
+      - ./nginx/static:/var/www/naks-infosystem/static
+      - /var/www/certbot/:/var/www/certbot/
 
     ports:
       - 80:80
@@ -29,8 +31,10 @@ services:
     command: > 
       bash -c "export API_DOMAIN=${API_DOMAIN} DOMAIN=${DOMAIN} DOLLAR='$' ORIGIN_REGEX='${ORIGIN_REGEX}'
       && envsubst < /etc/nginx/api_nginx.conf.template > /etc/nginx/sites-available/${API_DOMAIN}.conf
+      && envsubst < /etc/nginx/main_nginx.conf.template > /etc/nginx/sites-available/${DOMAIN}.conf
       && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
       && ln -sf /etc/nginx/sites-available/${API_DOMAIN}.conf /etc/nginx/sites-enabled/
+      && ln -sf /etc/nginx/sites-available/${DOMAIN}.conf /etc/nginx/sites-enabled/
       && nginx -t
       && nginx -g 'daemon off;'"
 

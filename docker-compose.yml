@@ -42,19 +42,17 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+        - DATABASE_NAME=${DATABASE_NAME}
+        - USER=${USER}
+        - PORT=${DB_PORT}
+        - MODE=${MODE}
+        - HOST=db
 
     container_name: backend
 
     restart: always
-
-    environment:
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - SECRET_KEY=${SECRET_KEY}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - USER=${USER}
-      - PORT=${DB_PORT}
-      - MODE=${MODE}
-      - HOST=db
 
     ports: 
       - 8000:8000
@@ -63,9 +61,10 @@ services:
       - infosystem_net
 
     depends_on:
-      - db
-    
-    command: bash -c "alembic upgrade head && uvicorn src.app:app --workers 1 --host 0.0.0.0 --port 8000"
+      - db   
+      
+    command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --workers 1 --host 0.0.0.0 --port 8000"
+
 
   db:
     container_name: db
@@ -96,21 +95,18 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
+      args:
+        - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+        - DATABASE_NAME=${AUTH_DATABASE_NAME}
+        - USER=${USER}
+        - PORT=${AUTH_PORT}
+        - MODE=${MODE}
+        - HOST=auth_db
+        - SECRET_KEY=${SECRET_KEY}
 
     container_name: auth
 
     restart: always
-    
-    environment:
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - AUTH_DATABASE_NAME=${AUTH_DATABASE_NAME}
-      - SECRET_KEY=${SECRET_KEY}
-      - DOMAIN=${DOMAIN}
-      - API_DOMAIN=${API_DOMAIN}
-      - HOST=auth_db
-      - USER=${USER}
-      - PORT=${AUTH_PORT}
-      - MODE=${MODE}
 
     ports: 
       - 8001:8000
@@ -121,7 +117,7 @@ services:
     depends_on:
       - auth_db
 
-    command: bash -c "alembic upgrade head && uvicorn src.app:app --workers 1 --host 0.0.0.0 --port 8000"
+    command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --workers 1 --host 0.0.0.0 --port 8000"
 
   auth_db:
     container_name: auth_db

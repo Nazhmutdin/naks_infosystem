@@ -1,6 +1,8 @@
 *.env
 dumps
 
+nginx/static/*.png
+
 frontend/
 
 key.pem

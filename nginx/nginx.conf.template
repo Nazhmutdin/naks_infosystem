@@ -13,8 +13,6 @@ http {
 		${ORIGIN_REGEX} ${DOLLAR}http_origin;
 		default "";
 	}
-	
-	index index.html index.nginx-debian.html;
 
     ssl_stapling on;
     ssl_stapling_verify on;
@@ -57,6 +55,6 @@ http {
 		}
 	}
 
-	include /etc/nginx/sites-enabled/*;
 	include mime.types;
+	include /etc/nginx/sites-enabled/*;
 }

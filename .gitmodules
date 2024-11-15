@@ -7,3 +7,8 @@
 	path = auth
 	url = https://github.com/Nazhmutdin/naks_infosystem_auth.git
 	ignore = dirty
+
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/Nazhmutdin/naks_infosystem_frontend.git
+	ignore = dirty

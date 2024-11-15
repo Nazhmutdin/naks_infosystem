@@ -14,8 +14,9 @@ services:
       - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
       - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
       - ./nginx/ssl/key.pem:/etc/nginx/key.pem
+      - /var/www/certbot:/var/www/certbot/
+      - /var/www/naks-infosystem/dist:/var/www/naks-infosystem
       - ./nginx/static:/var/www/naks-infosystem/static
-      - /var/www/certbot/:/var/www/certbot/
 
     ports:
       - 80:80
@@ -27,6 +28,7 @@ services:
     depends_on:
       - backend
       - auth
+      - frontend
 
     command: > 
       bash -c "export API_DOMAIN=${API_DOMAIN} DOMAIN=${DOMAIN} DOLLAR='$' ORIGIN_REGEX='${ORIGIN_REGEX}'
@@ -37,6 +39,20 @@ services:
       && ln -sf /etc/nginx/sites-available/${DOMAIN}.conf /etc/nginx/sites-enabled/
       && nginx -t
       && nginx -g 'daemon off;'"
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: frontend
+
+    volumes:
+      - /var/www/naks-infosystem/dist:/app/dist
+
+    command: "npm run build"
+
 
   backend:
     build:

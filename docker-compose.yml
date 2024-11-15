@@ -15,7 +15,7 @@ services:
       - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
       - ./nginx/ssl/key.pem:/etc/nginx/key.pem
       - /var/www/certbot:/var/www/certbot/
-      - /var/www/naks-infosystem/dist:/var/www/naks-infosystem
+      - /var/www/naks-infosystem/dist:/var/www/naks-infosystem/dist
       - ./nginx/static:/var/www/naks-infosystem/static
 
     ports:
@@ -45,13 +45,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - DOMAIN=${DOMAIN}
+        - API_DOMAIN=${API_DOMAIN}
 
     container_name: frontend
 
     volumes:
       - /var/www/naks-infosystem/dist:/app/dist
 
-    command: "npm run build"
+    command: "npm run build --mode production"
 
 
   backend:

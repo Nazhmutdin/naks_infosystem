@@ -6,10 +6,12 @@ server {
     keepalive_timeout  65;
     default_type  application/octet-stream;
 
-    root /var/www/naks-infosystem/;
+    root /var/www/naks-infosystem/dist;
     index index.html;
 
-    location /static/ {}
+    location /static/ {
+        alias /var/www/naks-infosystem/static/;
+    }
 
     location / {
         try_files ${DOLLAR}uri ${DOLLAR}uri/ /index.html;

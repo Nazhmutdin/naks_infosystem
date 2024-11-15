@@ -29,7 +29,7 @@ http {
     add_header 'Access-Control-Allow-Origin' ${DOLLAR}allow_origin;
 	add_header 'Access-Control-Allow-Credentials' 'true';
 	add_header 'Access-Control-Allow-Headers' 'Accept, Accept-Language, Content-Language, Content-Type';
-	add_header 'Access-Control-Allow-Methods' 'OPTIONS, POST, GET, PATCH, DELETE, PUT';
+	add_header 'Access-Control-Allow-Methods' 'POST, GET, PATCH, DELETE, PUT, OPTIONS';
 
     ssl_session_timeout 1d;
     ssl_session_cache shared:SharedNixCraftSSL:10m;

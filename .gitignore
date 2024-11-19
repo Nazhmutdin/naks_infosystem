@@ -3,6 +3,8 @@ dumps
 
 nginx/static/*.png
 
+files
+
 key.pem
 cert.pem
 trusted_cert.pem

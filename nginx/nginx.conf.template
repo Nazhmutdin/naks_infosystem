@@ -9,10 +9,24 @@ events {
 
 http {
 
+	upstream backend_host {
+		server backend:8000;
+	}
+
+	upstream auth_host {
+		server auth:8000;
+	}
+
+	upstream files_host {
+		server files:8000;
+	}
+
 	map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
 		${ORIGIN_REGEX} ${DOLLAR}http_origin;
 		default "";
 	}
+	
+	include mime.types;
 
     ssl_stapling on;
     ssl_stapling_verify on;
@@ -55,6 +69,103 @@ http {
 		}
 	}
 
-	include mime.types;
-	include /etc/nginx/sites-enabled/*;
+	server {
+		server_name ${DOMAIN};
+		listen 443 ssl;
+
+		sendfile on;
+		keepalive_timeout 65;
+		default_type  application/octet-stream;
+
+		root /var/www/naks-infosystem/dist;
+		index index.html;
+
+		location /static/ {
+			alias /var/www/naks-infosystem/static/;
+		}
+
+		location / {
+			try_files ${DOLLAR}uri ${DOLLAR}uri/ /index.html;
+		}
+	}
+
+	server {
+		server_name ${API_DOMAIN};
+		listen 443 ssl;
+
+		location = /validate-access {
+			internal;
+			proxy_method POST;
+			proxy_pass http://auth_host/auth/v1/validate-access;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+
+		location /auth/v1 {
+
+			if (${DOLLAR}request_method = OPTIONS) {
+				return 200;
+			}
+			
+			proxy_pass http://auth_host;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+
+		location /v1/user {
+
+			if (${DOLLAR}request_method = OPTIONS) {
+				return 200;
+			}
+
+			proxy_pass http://auth_host;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+
+		location /v1 {
+
+			if (${DOLLAR}request_method = OPTIONS) {
+				return 200;
+			}
+
+			auth_request /validate-access;
+
+			proxy_pass http://backend_host;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+	}
+
+	server {
+		server_name ${FILES_DOMAIN};
+		listen 443 ssl;
+
+		location = /validate-access {
+			internal;
+			proxy_method POST;
+			proxy_pass http://auth_host/auth/v1/validate-access;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+
+		location / {
+
+			if (${DOLLAR}request_method = OPTIONS) {
+				return 200;
+			}
+
+			auth_request /validate-access;
+
+			proxy_pass http://files_host;
+
+			proxy_pass_request_body on;
+			proxy_pass_request_headers on;
+		}
+	}
 }

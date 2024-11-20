@@ -12,3 +12,7 @@
 	path = frontend
 	url = https://github.com/Nazhmutdin/naks_infosystem_frontend.git
 	ignore = dirty
+	
+[submodule "files"]
+	path = files
+	url = git@github.com:Nazhmutdin/naks_infosystem_files.git

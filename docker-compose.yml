@@ -85,7 +85,7 @@ services:
       dockerfile: Dockerfile
 
     volumes:
-      - /var/www/naks-infosystem/files:/files_service/static
+      - /var/www/naks-infosystem/files:/var/www/naks-infosystem/static
 
     container_name: files
 

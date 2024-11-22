@@ -10,29 +10,23 @@ gen-localhost-cert:
 pull-recurse:
 	git pull --recurse-submodules
 
-up:
-	docker compose up $(container-name)
+up-build-prod:
+	docker compose -f production.docker-compose.yml up --build $(container-name)
 
-up-d:
-	docker compose up -d $(container-name)
+down-prod:
+	docker compose -f production.docker-compose.yml down $(container-name)
 
-build:
-	docker compose build $(container-name)
+up-build-dev:
+	docker compose -f dev.docker-compose.yml up --watch --build $(container-name)
 
-up-build:
-	docker compose up --build $(container-name)
+down-dev:
+	docker compose -f dev.docker-compose.yml down $(container-name)
 
-up-build-d:
-	docker compose up --build -d $(container-name)
+start-dev:
+	docker compose -f dev.docker-compose.yml start $(container-name)
 
-up-build-nginx:
-	docker compose up --build nginx
-
-up-build-d-nginx:
-	docker compose up --build -d nginx
-
-start:
-	docker compose start $(container-name)
+start-prod:
+	docker compose -f production.docker-compose.yml start $(container-name)
 
 stop:
 	docker compose stop $(container-name)
@@ -42,6 +36,13 @@ move-file:
 
 reload-nginx-container:
 	docker exec -it nginx nginx -s reload
+
+restore-data:
+	cat ./dumps/users.sql | docker compose exec -T db psql -d ${AUTH_DATABASE_NAME} -U ${USER}
+	cat ./dumps/personal-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
+	cat ./dumps/personal-naks-certification-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
+	cat ./dumps/ndt-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
+	cat ./dumps/acst-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
 
 dump-data:
 	docker exec -it db pg_dump -d rhi -U ${USER} > $(file-name).sql -a

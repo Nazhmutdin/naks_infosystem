@@ -1,0 +1,71 @@
+services: 
+  nginx:
+    container_name: nginx
+
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./nginx/nginx.frontend.dev.conf:/etc/nginx/nginx.frontend.conf:ro
+      - ./nginx/nginx.certbot.conf:/etc/nginx/nginx.certbot.conf:ro
+      - ./nginx/nginx.files.conf:/etc/nginx/nginx.files.conf:ro
+      - ./nginx/nginx.api.conf:/etc/nginx/nginx.api.conf:ro
+      - ./nginx/ssl/trusted_cert.pem:/etc/nginx/trusted_cert.pem
+      - ./nginx/ssl/cert.pem:/etc/nginx/cert.pem
+      - ./nginx/ssl/key.pem:/etc/nginx/key.pem
+      - /var/www/certbot:/var/www/certbot/
+      - ./nginx/static:/var/www/naks-infosystem/static
+      - /var/www/naks-infosystem/logs/:/var/www/naks-infosystem/logs/
+
+    ports:
+      - 80:80
+      - 443:443
+
+    networks:
+      - infosystem_net
+
+    command: > 
+      bash -c "export API_DOMAIN=${API_DOMAIN} DOMAIN=${DOMAIN} FILES_DOMAIN=${FILES_DOMAIN} DOLLAR='$' ORIGIN_REGEX='${ORIGIN_REGEX}'
+      && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+      && envsubst < /etc/nginx/nginx.frontend.conf > /etc/nginx/sites-available/nginx.frontend.conf
+      && envsubst < /etc/nginx/nginx.certbot.conf > /etc/nginx/sites-available/nginx.certbot.conf
+      && envsubst < /etc/nginx/nginx.files.conf > /etc/nginx/sites-available/nginx.files.conf
+      && envsubst < /etc/nginx/nginx.api.conf > /etc/nginx/sites-available/nginx.api.conf
+      && ln -sf /etc/nginx/sites-available/nginx.frontend.conf /etc/nginx/sites-enabled/
+      && ln -sf /etc/nginx/sites-available/nginx.certbot.conf /etc/nginx/sites-enabled/
+      && ln -sf /etc/nginx/sites-available/nginx.files.conf /etc/nginx/sites-enabled/
+      && ln -sf /etc/nginx/sites-available/nginx.api.conf /etc/nginx/sites-enabled/
+      && nginx -t
+      && nginx -g 'daemon off;'"
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    environment:
+      - DOMAIN=${DOMAIN}
+      - API_DOMAIN=${API_DOMAIN}
+      - FILES_DOMAIN=${FILES_DOMAIN}
+
+    volumes:
+      - ./frontend:/app
+
+    container_name: frontend
+
+    restart: always
+
+    networks:
+      - infosystem_net
+
+    ports: 
+      - 3000:3000
+
+    command: "npm run dev"
+
+
+include:
+  - docker-compose.yml  

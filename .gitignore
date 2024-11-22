@@ -5,4 +5,7 @@ nginx/static/*.png
 
 key.pem
 cert.pem
+cert.conf
+myCA.key
+myCA.pem
 trusted_cert.pem

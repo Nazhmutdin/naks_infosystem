@@ -32,6 +32,8 @@ http {
     ssl_certificate_key /etc/nginx/key.pem;
     ssl_trusted_certificate /etc/nginx/trusted_cert.pem;
 
+	add_header X-Request-Time ${DOLLAR}request_time;
+
     add_header X-Frame-Options SAMEORIGIN;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block";
@@ -39,7 +41,7 @@ http {
 
     add_header 'Access-Control-Allow-Origin' ${DOLLAR}allow_origin;
 	add_header 'Access-Control-Allow-Credentials' 'true';
-	add_header 'Access-Control-Allow-Headers' 'Accept, Accept-Language, Content-Language, Content-Type';
+	add_header 'Access-Control-Allow-Headers' 'Accept, Accept-Language, Content-Language, Content-Type, X-Request-Time';
 	add_header 'Access-Control-Allow-Methods' 'POST, GET, PATCH, DELETE, PUT, OPTIONS';
 
     ssl_session_timeout 1d;

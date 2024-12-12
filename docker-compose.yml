@@ -65,6 +65,14 @@ services:
       context: ./files
       dockerfile: Dockerfile
 
+    environment:
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${FILES_DATABASE_NAME}
+      - USER=${USER}
+      - PORT=${DB_PORT}
+      - MODE=${MODE}
+      - HOST=db
+
     volumes:
       - /var/www/naks-infosystem/files:/var/www/naks-infosystem/static
 
@@ -81,7 +89,7 @@ services:
     depends_on:
       - db
 
-    command: bash -c "cd src && poetry run uvicorn app.main.app:app --workers 1 --host 0.0.0.0 --port 8000"
+    command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --workers 1 --host 0.0.0.0 --port 8000"
 
 
   db:

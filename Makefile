@@ -49,15 +49,3 @@ down-dev:
 
 move-file:
 	scp -i ~/.ssh/cloudru $(path-from) ${USER}@${IP}:$(path-to)
-
-
-#=============================================================================================
-
-
-restore-data:
-	cat ./dumps/users.sql | docker compose exec -T db psql -d ${AUTH_DATABASE_NAME} -U ${USER}
-	cat ./dumps/permissions.sql | docker compose exec -T db psql -d ${AUTH_DATABASE_NAME} -U ${USER}
-	cat ./dumps/personal-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
-	cat ./dumps/personal-naks-certification-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
-	cat ./dumps/ndt-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}
-	cat ./dumps/acst-data.sql | docker compose exec -T db psql -d ${BACKEND_DATABASE_NAME} -U ${USER}

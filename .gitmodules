@@ -15,5 +15,5 @@
 	
 [submodule "files"]
 	path = files
-	url = git@github.com:Nazhmutdin/naks_infosystem_files.git
+	url = https://github.com/Nazhmutdin/naks_infosystem_files.git
 	ignore = dirty

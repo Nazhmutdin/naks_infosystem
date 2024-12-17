@@ -62,3 +62,7 @@ services:
 
 networks:
   infosystem_net:
+
+
+include:
+  - docker-compose.yml  

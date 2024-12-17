@@ -52,8 +52,6 @@ services:
       - API_DOMAIN=${API_DOMAIN}
       - FILES_DOMAIN=${FILES_DOMAIN}
 
-    container_name: frontend
-
     volumes:
       - /var/www/naks-infosystem/dist:/app/dist
 

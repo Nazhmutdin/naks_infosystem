@@ -2,6 +2,7 @@
 dumps
 
 nginx/static/*.png
+nginx/static/favicon.ico
 
 key.pem
 cert.pem

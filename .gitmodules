@@ -1,19 +1,19 @@
 [submodule "backend"]
 	path = backend
-	url = https://github.com/Nazhmutdin/naks_infosystem_backend.git
+	url = git@github.com:Nazhmutdin/naks_infosystem_backend.git
 	ignore = dirty
 
 [submodule "auth"]
 	path = auth
-	url = https://github.com/Nazhmutdin/naks_infosystem_auth.git
+	url = git@github.com:Nazhmutdin/naks_infosystem_auth.git
 	ignore = dirty
 
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/Nazhmutdin/naks_infosystem_frontend.git
+	url = git@github.com:Nazhmutdin/naks_infosystem_frontend.git
 	ignore = dirty
 	
 [submodule "files"]
 	path = files
-	url = https://github.com/Nazhmutdin/naks_infosystem_files.git
+	url = git@github.com:Nazhmutdin/naks_infosystem_files.git
 	ignore = dirty

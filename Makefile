@@ -16,32 +16,32 @@ gen-localhost-cert:
 
 
 up-build-prod:
-	docker compose -f production.docker-compose.yml up --build $(container-name)
+	docker compose -f docker-compose.yml -f production.docker-compose.yml up --build $(container-name)
 
 start-prod:
-	docker compose -f production.docker-compose.yml start $(container-name)
+	docker compose -f docker-compose.yml -f production.docker-compose.yml start $(container-name)
 
 stop-prod:
-	docker compose -f production.docker-compose.yml stop $(container-name)
+	docker compose -f docker-compose.yml -f production.docker-compose.yml stop $(container-name)
 
 down-prod:
-	docker compose -f production.docker-compose.yml down $(container-name)
+	docker compose -f docker-compose.yml -f production.docker-compose.yml down $(container-name)
 
 
 #=============================================================================================
 
 
 up-build-dev:
-	docker compose -f dev.docker-compose.yml up --build $(container-name)
+	docker compose -f docker-compose.yml -f dev.docker-compose.yml up --build $(container-name)
 
 start-dev:
-	docker compose -f dev.docker-compose.yml start $(container-name)
+	docker compose -f docker-compose.yml -f dev.docker-compose.yml start $(container-name)
 
 stop-dev:
-	docker compose -f dev.docker-compose.yml stop $(container-name)
+	docker compose -f docker-compose.yml -f dev.docker-compose.yml stop $(container-name)
 
 down-dev:
-	docker compose -f dev.docker-compose.yml down $(container-name)
+	docker compose -f docker-compose.yml -f dev.docker-compose.yml down $(container-name)
 
 
 #=============================================================================================

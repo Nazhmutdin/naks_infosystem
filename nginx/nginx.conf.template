@@ -23,6 +23,8 @@ http {
 		default "";
 	}
 
+	http2 on;
+
 	error_log /var/www/naks-infosystem/logs/error.log;
 
     ssl_stapling on;

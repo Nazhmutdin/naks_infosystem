@@ -3,6 +3,7 @@ services:
     volumes:
       - ./nginx/nginx.frontend.dev.conf:/etc/nginx/nginx.frontend.conf:ro
 
+
   frontend:
     volumes:
       - ./frontend:/app
@@ -18,16 +19,19 @@ services:
   backend:
     volumes:
       - ./backend/src:/backend_service/src
+
     command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --reload --workers 1 --host 0.0.0.0 --port 8000"
 
 
   auth:
     volumes:
       - ./auth/src:/auth_service/src
+
     command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --reload --workers 1 --host 0.0.0.0 --port 8000"
 
 
   files:
     volumes:
       - ./files/src:/files_service/src
+
     command: bash -c "poetry run alembic upgrade head && cd src && poetry run uvicorn app.main.app:app --reload --workers 1 --host 0.0.0.0 --port 8000"

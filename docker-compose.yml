@@ -189,7 +189,7 @@ services:
     container_name: rencons-infosystem-redis
 
     ports:
-      - 6379:${REDIS_PORT}
+      - 6380:${REDIS_PORT}
 
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf

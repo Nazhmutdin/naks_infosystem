@@ -65,9 +65,13 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${BACKEND_DATABASE_NAME}
       - USER=${USER}
-      - PORT=${DB_PORT}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
       - MODE=${MODE}
-      - HOST=db
+      - REDIS_USER=${USER}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
 
     container_name: rencons-infosystem-backend
 
@@ -97,8 +101,10 @@ services:
       - PORT=${DB_PORT}
       - MODE=${MODE}
       - SECRET_KEY=${SECRET_KEY}
-      - HOST=db
       - DOMAIN=${DOMAIN}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+      - HOST=db
 
     container_name: rencons-infosystem-auth
 
@@ -175,6 +181,34 @@ services:
       test: [ "CMD", "pg_isready", "-d", "${BACKEND_DATABASE_NAME}", "-U", "${USER}" ]
       timeout: 3s
       retries: 5
+
+
+  redis:
+    image: redis:7.4.1
+
+    container_name: rencons-infosystem-redis
+
+    ports:
+      - 6379:${REDIS_PORT}
+
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+    networks:
+      - infosystem_net
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    restart: unless-stopped
+
+    command: redis-server /usr/local/etc/redis/redis.conf
 
 
 volumes:

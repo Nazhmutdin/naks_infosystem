@@ -49,3 +49,13 @@ down-dev:
 
 move-file:
 	scp -i ~/.ssh/cloudru $(path-from) ${USER}@${IP}:$(path-to)
+
+
+#=============================================================================================
+
+
+dumb-db:
+	sh ./scripts/dumb_db.sh $(version-name)
+
+restore-db:
+	sh ./scripts/restore_db.sh $(version-name)
